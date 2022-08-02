@@ -3,7 +3,8 @@
 * Registrarte
 * Iniciar sesion
 * Agendar tu propio encuentro
-* Notificacion de cita proxima(3 horas antes)
-* Listado de cortes de pelo
+* Notificacion de cita proxima a [determinado por la configuracion]
+* Listado de cortes de pelo (crud, [nombre, imagen, precio, duracion])
 * Calendario con informacion de las agendas hechas
-
+* configuraciones (horas a esperar para mandar notificacion)
+*
