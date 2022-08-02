@@ -1,0 +1,9 @@
+
+
+* Registrarte
+* Iniciar sesion
+* Agendar tu propio encuentro
+* Notificacion de cita proxima(3 horas antes)
+* Listado de cortes de pelo
+* Calendario con informacion de las agendas hechas
+
