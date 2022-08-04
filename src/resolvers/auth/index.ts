@@ -1,7 +1,10 @@
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
-import { logInByCredentials, signIn } from "../../services/auth";
-import { LoginInput, SignInByCredentialInput } from "./inputDefs";
-import { LoginOutput, SignInByCredentialOutput } from "./OutputDefs";
+import { logInByCredentials, logInByToken, signIn } from "../../authService";
+import { LogInByCredentialInput, SignInInput } from "./inputDefs";
+import {
+  LogInByCredentialOutput,
+  SignInOutput,
+} from "./outputDefs";
 
 @Resolver()
 export default class AuthResolver {
@@ -11,20 +14,30 @@ export default class AuthResolver {
     return false;
   }
 
-  @Mutation(() => LoginOutput, {
-    description: "this is a resolver to login in the app",
+  @Mutation(() => SignInOutput, {
+    description:
+      "For sign in you need to provide a non existing user for can save it and return a token",
   })
-  async logIn(@Arg("user") userInput: LoginInput) {
+  async signIn(@Arg("user") userInput: SignInInput) {
     const token = await signIn(userInput);
+
     return { token };
   }
 
-  @Mutation(() => SignInByCredentialOutput)
-  async signInByCredentials(
-    @Arg("credentials") credentials: SignInByCredentialInput
+  @Mutation(() => LogInByCredentialOutput, {
+    description: "You need to provide a valid credentials for log into the app",
+  })
+  async logInByCredential(
+    @Arg("credentials") credentials: LogInByCredentialInput
   ) {
     const { email, password, username } = credentials;
-    const token = logInByCredentials(username, password, email);
+    const token = await logInByCredentials(username, password, email);
     return { token };
+  }
+
+  @Mutation(() => Boolean, {description: 'verify if the token provided is valid for can log in'})
+  async logInByToken(@Arg("token") token: string) {
+    const isSuccefullyLoggin = logInByToken(token);
+    return isSuccefullyLoggin;;
   }
 }

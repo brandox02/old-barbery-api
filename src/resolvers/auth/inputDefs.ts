@@ -1,7 +1,7 @@
 import { Field, InputType } from "type-graphql";
 
 @InputType()
-export class LoginInput {
+export class SignInInput {
   @Field()
   email: string;
   @Field()
@@ -15,7 +15,7 @@ export class LoginInput {
 }
 
 @InputType()
-export class SignInByCredentialInput {
+export class LogInByCredentialInput {
   @Field({ nullable: true })
   email?: string;
   @Field()
@@ -24,8 +24,3 @@ export class SignInByCredentialInput {
   username?: string;
 }
 
-@InputType()
-export class SignInByTokenInput {
-  @Field()
-  token: string;
-}

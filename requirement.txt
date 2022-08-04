@@ -1,10 +1,16 @@
 
 
-* Registrarte
-* Iniciar sesion
+* Registrarte-LISTO
+* Iniciar sesion-LISTO
 * Agendar tu propio encuentro
 * Notificacion de cita proxima a [determinado por la configuracion]
-* Listado de cortes de pelo (crud, [nombre, imagen, precio, duracion])
-* Calendario con informacion de las agendas hechas
-* configuraciones (horas a esperar para mandar notificacion)
-*
+* Listado de cortes de pelo (crud, [nombre, imagen, precio, duracion])-LISTO
+* Calendario con informacion de las agendas hechas-LISTO
+* Configuraciones (horas a esperar para mandar notificacion)
+* Horarios (dinamismo a la hora de elegir entrada y salida, puedes poner intervalos de tiempo inactivo diario )
+
+
+
+ISSUE:
+
+* poner a cargar el dynamicamente las entidades

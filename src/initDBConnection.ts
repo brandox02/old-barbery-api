@@ -1,8 +1,35 @@
-import mongoose, { Error } from "mongoose";
+import { DataSource } from "typeorm";
+import dotenv from "dotenv";
+// import path from "path";
+import Haircut from "./entities/Haircut";
+import Schedule from "./entities/Schedule";
+import User from "./entities/User";
+import GeneralParameter from "./entities/GeneralParameter";
+
+export let appDataSource: DataSource | null = null;
 
 export default async function initDBConnection() {
-  const uri =
-    "mongodb+srv://TqBifhlD4Dtwt2Yx:TqBifhlD4Dtwt2Yx@cluster0.7ixjw.mongodb.net/?retryWrites=true&w=majority";
+  dotenv.config();
+  const AppDataSource = new DataSource({
+    type: "postgres",
+    host: process.env.DB_HOST,
+    port: parseInt(process.env.DB_PORT || ""),
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    synchronize: true,
 
-  return await mongoose.connect(uri, { dbName: "barbery" });
+    entities: [
+      Haircut,
+      Schedule,
+      User,
+      GeneralParameter,
+      // path.join(__dirname, "./entities/*.js"),
+    ],
+  });
+  await AppDataSource.initialize();
+
+  appDataSource = AppDataSource;
+
+  return AppDataSource;
 }
