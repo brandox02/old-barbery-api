@@ -26,9 +26,9 @@ export default class Haircut {
   @Field()
   price: number;
 
-  @Column({ type: "timestamp" })
+  @Column({ type: "time" })
   @Field()
-  duration: Date;
+  duration: string;
 
   @CreateDateColumn({ name: "created_at" })
   createdAt: Date;

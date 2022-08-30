@@ -10,7 +10,7 @@ import {
 } from "typeorm";
 import NonWorkInterval from "./NonWorkInterval";
 @ObjectType()
-@Entity({ name: "work_schedules", schema: "public" })
+@Entity({ name: "work_schedule_days", schema: "public" })
 export default class WorkScheduleDay {
   @PrimaryGeneratedColumn()
   @Field()
@@ -22,13 +22,16 @@ export default class WorkScheduleDay {
 
   @Column({ type: "time" })
   @Field()
-  start: Date;
+  start: string;
 
   @Column({ type: "time" })
   @Field()
   end: string;
 
-  @OneToMany((_) => NonWorkInterval, (n) => n.workScheduleDayId)
+  @Field(() => [NonWorkInterval])
+  @OneToMany((_) => NonWorkInterval, (n) => n.workScheduleDay, {
+    cascade: true,
+  })
   nonWorkIntervals: NonWorkInterval[];
 
   @CreateDateColumn({ name: "created_at" })

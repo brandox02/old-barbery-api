@@ -1,4 +1,4 @@
-
+CARACTERISTICAS DE LA APP:
 
 * Registrarte-LISTO
 * Iniciar sesion-LISTO
@@ -8,9 +8,12 @@
 * Calendario con informacion de las agendas hechas-LISTO
 * Configuraciones (horas a esperar para mandar notificacion)
 * Horarios (dinamismo a la hora de elegir entrada y salida, puedes poner intervalos de tiempo inactivo diario )
+* poner a filtrar por fecha::date
 
 
+FEAT'S PENDIENTES:
 
-ISSUE:
+
+ISSUE'S PENDIENTES:
 
 * poner a cargar el dynamicamente las entidades

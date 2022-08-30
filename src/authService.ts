@@ -24,9 +24,10 @@ export async function signIn(user: SignInInput): Promise<string> {
     throw new Error("This user already exists");
   }
 
-  await userRepo.save(userRepo.create(user));
+  const userSaved = await userRepo.save(userRepo.create(user));
 
-  const token = generateAccesToken(user);
+
+  const token = generateAccesToken(userSaved);
 
   return token;
 }
@@ -65,3 +66,5 @@ export function logInByToken(token: string): boolean {
     return false;
   }
 }
+
+export const getUserByToken = (token: string) => jwt.decode(token);

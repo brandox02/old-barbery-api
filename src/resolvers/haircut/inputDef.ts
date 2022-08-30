@@ -14,5 +14,5 @@ export class HaircutInput {
   price: number;
 
   @Field({ nullable: true })
-  duration: number;
+  duration: string;
 }

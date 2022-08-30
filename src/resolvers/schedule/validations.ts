@@ -1,15 +1,15 @@
+import dayjs from "dayjs";
 import { Repository } from "typeorm";
 import Haircut from "../../entities/Haircut";
 import Schedule from "../../entities/Schedule";
+import { getScheduleInDate } from "../../scheduleService";
 import { ICtx } from "../../types";
 import { ScheduleInput } from "./inputDef";
 
 export const saveScheduleValidations = async (
   schedule: ScheduleInput,
-  ctx: ICtx,
-  scheduleRepo: Repository<Schedule>
+  ctx: ICtx
 ) => {
-  console.log({ schedule });
   const isCreate = !("id" in schedule);
   const willUpdateScheduleDate = "scheduleDate" in schedule;
 
@@ -20,32 +20,28 @@ export const saveScheduleValidations = async (
 
     if (!haircut) throw new Error("**No existe este corte de pelo");
 
-    const existsWithEqualDate = Boolean(
-      await scheduleRepo.findOne({
-        where: { scheduleDate: schedule.scheduleDate },
-      })
+    const exitsScheduleInProcess = await getScheduleInDate(
+      ctx,
+      schedule.scheduleDate,
+      haircut.duration
     );
 
-    if (existsWithEqualDate) {
-      throw new Error("**Ya hay una cita con esta misma fecha de agendación");
+    if (exitsScheduleInProcess.length) {
+      const formattedDate = dayjs(
+        exitsScheduleInProcess[0]["schedule_date"]
+      ).format("DD-MM-YYYY");
+
+      const formattedDuration = dayjs(
+        `01-01-0000 ${exitsScheduleInProcess[0]["duration"]}`
+      ).format("HH:mm");
+
+      const formattedTime = dayjs(
+        exitsScheduleInProcess[0]["schedule_date"]
+      ).format("HH:mm");
+      throw new Error(
+        `**Esta fecha choca con una agenda del ${formattedDate} que empieza a las ${formattedTime} y tiene una duración de ${formattedDuration}`
+      );
     }
-
-    const haircutDuration = haircut.duration;
-
-    const exitsScheduleInProcess = await ctx.appDataSource.query(
-      `select * from schedules where 
-      schedule_date between '2022-08-18 08:00:00' and '2022-08-18 08:00:00'::timestamp + interval '00:10:00' or
-      schedule_date + interval '00:10:00' between '2022-08-18 08:00:00' and '2022-08-18 08:00:00'::timestamp + interval '00:10:00'
-      `
-    );
-
-    if (false) {
-      throw new Error("**Para esta fecha va a haber una cita en proceso");
-    }
-
-    console.log({ exitsScheduleInProcess });
-
-    if (exitsScheduleInProcess) throw new Error("");
   } else if (willUpdateScheduleDate) {
     throw new Error("**No puedes cambiarle la fecha de agenda a una cita");
   }

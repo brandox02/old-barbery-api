@@ -6,22 +6,35 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   JoinColumn,
+  ManyToOne,
+  RelationId,
 } from "typeorm";
+import WorkScheduleDay from "./WorkScheduleDay";
 
 @ObjectType()
-@Entity({ name: "non_work_hours", schema: "public" })
+@Entity({ name: "non_work_hour_intervals", schema: "public" })
 export default class NonWorkInteval {
   @PrimaryGeneratedColumn()
   @Field()
   id: number;
 
-  @Column({ name: "worK_schedule_day_id" })
+  @Column({ name: "work_schedule_day_id", nullable: true })
   @Field()
   workScheduleDayId: number;
 
+  @Column({ name: "description", nullable: true })
+  @Field({ nullable: true })
+  description: string;
+
+  @ManyToOne(() => WorkScheduleDay, (w) => w.nonWorkIntervals)
+  @JoinColumn({
+    name: "work_schedule_day_id",
+  })
+  workScheduleDay: WorkScheduleDay;
+
   @Column({ type: "time" })
   @Field()
-  start: Date;
+  start: string;
 
   @Column({ type: "time" })
   @Field()

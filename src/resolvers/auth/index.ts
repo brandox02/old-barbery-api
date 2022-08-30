@@ -1,19 +1,19 @@
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
-import { logInByCredentials, logInByToken, signIn } from "../../authService";
+import {
+  getUserByToken,
+  logInByCredentials,
+  logInByToken,
+  signIn,
+} from "../../authService";
 import { LogInByCredentialInput, SignInInput } from "./inputDefs";
 import {
   LogInByCredentialOutput,
+  LogInByTokenOutput,
   SignInOutput,
 } from "./outputDefs";
 
 @Resolver()
 export default class AuthResolver {
-  @Query(() => Boolean)
-  test() {
-    console.log("something");
-    return false;
-  }
-
   @Mutation(() => SignInOutput, {
     description:
       "For sign in you need to provide a non existing user for can save it and return a token",
@@ -35,9 +35,18 @@ export default class AuthResolver {
     return { token };
   }
 
-  @Mutation(() => Boolean, {description: 'verify if the token provided is valid for can log in'})
+  @Mutation(() => LogInByTokenOutput, {
+    description: "verify if the token provided is valid for can log in",
+  })
   async logInByToken(@Arg("token") token: string) {
     const isSuccefullyLoggin = logInByToken(token);
-    return isSuccefullyLoggin;;
+    if (isSuccefullyLoggin) {
+      const user = getUserByToken(token);
+      console.log(user);
+      return { user };
+    }
+    return {
+      user: null,
+    };
   }
 }

@@ -1,4 +1,5 @@
 import { Field, ObjectType } from "type-graphql";
+import User from "../../entities/User";
 
 @ObjectType()
 export class SignInOutput {
@@ -10,4 +11,10 @@ export class SignInOutput {
 export class LogInByCredentialOutput {
   @Field()
   token: String;
+}
+
+@ObjectType()
+export class LogInByTokenOutput {
+  @Field({ nullable: true })
+  user: User;
 }

@@ -5,6 +5,8 @@ import Haircut from "./entities/Haircut";
 import Schedule from "./entities/Schedule";
 import User from "./entities/User";
 import GeneralParameter from "./entities/GeneralParameter";
+import WorkScheduleDay from "./entities/WorkScheduleDay";
+import NonWorkInterval from "./entities/NonWorkInterval";
 
 export let appDataSource: DataSource | null = null;
 
@@ -24,6 +26,8 @@ export default async function initDBConnection() {
       Schedule,
       User,
       GeneralParameter,
+      WorkScheduleDay,
+      NonWorkInterval
       // path.join(__dirname, "./entities/*.js"),
     ],
   });
