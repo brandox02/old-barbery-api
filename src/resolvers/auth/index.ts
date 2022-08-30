@@ -34,7 +34,7 @@ export default class AuthResolver {
     const token = await logInByCredentials(username, password, email);
     return { token };
   }
-
+ 
   @Mutation(() => LogInByTokenOutput, {
     description: "verify if the token provided is valid for can log in",
   })
