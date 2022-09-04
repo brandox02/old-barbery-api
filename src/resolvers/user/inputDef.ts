@@ -22,4 +22,7 @@ export class UserInput {
 
   @Field({ nullable: true })
   isAdmin: boolean;
+
+  @Field({ nullable: true })
+  image: string;
 }

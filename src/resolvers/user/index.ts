@@ -4,6 +4,7 @@ import { Arg } from "type-graphql";
 import { UserInput } from "./inputDef";
 import { ICtx } from "../../types";
 import { removeNullFields } from "../../utils";
+import { logInByCredentials } from "../../authService";
 
 @Resolver()
 export default class UserResolver {
@@ -22,7 +23,7 @@ export default class UserResolver {
     return user;
   }
 
-  @Mutation(() => User, {
+  @Mutation(() => String, {
     description:
       "create or update depending if send id or not, if is create you need to send all entity fields without a id, if is update just is obligatory send the _id field",
   })
@@ -31,6 +32,12 @@ export default class UserResolver {
 
     const userSaved = await userRepo.save(userRepo.create(user));
 
-    return await userRepo.findOne({ where: { id: userSaved.id } });
+    const token = await logInByCredentials(
+      userSaved.username,
+      userSaved.password,
+      userSaved.email
+    );
+
+    return token;
   }
 }

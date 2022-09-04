@@ -34,7 +34,7 @@ export default class AuthResolver {
     const token = await logInByCredentials(username, password, email);
     return { token };
   }
- 
+
   @Mutation(() => LogInByTokenOutput, {
     description: "verify if the token provided is valid for can log in",
   })
@@ -42,7 +42,7 @@ export default class AuthResolver {
     const isSuccefullyLoggin = logInByToken(token);
     if (isSuccefullyLoggin) {
       const user = getUserByToken(token);
-      console.log(user);
+      console.log({ user });
       return { user };
     }
     return {

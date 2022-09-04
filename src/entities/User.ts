@@ -35,6 +35,10 @@ export default class User {
   @Field()
   lastname: string;
 
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  image?: string;
+
   @Column({ name: "is_admin", default: false })
   @Field()
   isAdmin: boolean;
