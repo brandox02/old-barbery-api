@@ -30,6 +30,9 @@ export default class Haircut {
   @Field()
   duration: string;
 
+  @Column({ default: true })
+  enabled: boolean;
+
   @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 

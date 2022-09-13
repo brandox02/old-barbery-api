@@ -1,12 +1,15 @@
 import "reflect-metadata";
 import initDBConnection from "./initDBConnection";
 import { ApolloServer } from "apollo-server";
-import { ApolloServerPluginLandingPageLocalDefault } from "apollo-server-core";
+import {
+  ApolloServerPluginLandingPageLocalDefault,
+  AuthenticationError,
+} from "apollo-server-core";
 import { buildSchema } from "type-graphql";
 import path from "path";
+import { getUserByToken } from "./authService";
 
 async function init() {
-
   const port = process.env.PORT || 5000;
 
   const schema = await buildSchema({
@@ -17,7 +20,22 @@ async function init() {
   const app = new ApolloServer({
     schema,
     plugins: [ApolloServerPluginLandingPageLocalDefault({ embed: true })],
-    context: async () => ({ appDataSource }),
+    context: async ({ req, res }) => {
+      const freeOperationNames = [
+        "LogInByCredential",
+        "LogInByToken",
+        "SignIn",
+      ];
+      if (!freeOperationNames.includes(req.body.operationName)) {
+        const token = req.headers.authorization || "";
+        const decoded = getUserByToken(token);
+        console.log({ decoded });
+        if (!decoded) {
+          throw new AuthenticationError("You must be logged");
+        }
+      }
+      return { appDataSource };
+    },
   });
 
   app.listen(port, async () => {

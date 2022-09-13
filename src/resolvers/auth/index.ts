@@ -42,7 +42,6 @@ export default class AuthResolver {
     const isSuccefullyLoggin = logInByToken(token);
     if (isSuccefullyLoggin) {
       const user = getUserByToken(token);
-      console.log({ user });
       return { user };
     }
     return {

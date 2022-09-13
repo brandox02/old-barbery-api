@@ -15,4 +15,7 @@ export class HaircutInput {
 
   @Field({ nullable: true })
   duration: string;
+
+  @Field({ nullable: true })
+  enabled: boolean;
 }

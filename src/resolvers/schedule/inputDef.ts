@@ -1,4 +1,4 @@
-import { Field, InputType, } from "type-graphql";
+import { Field, InputType } from "type-graphql";
 
 @InputType()
 export class ScheduleInput {
@@ -13,6 +13,8 @@ export class ScheduleInput {
 
   @Field({ nullable: true })
   scheduleDate: Date;
+
+
 }
 
 @InputType()
@@ -20,7 +22,7 @@ export class ScheduleWhereInput {
   @Field({ nullable: true })
   id: number;
 
-  @Field( { nullable: true })
+  @Field({ nullable: true })
   date: string;
 
   @Field({ nullable: true })
@@ -28,4 +30,9 @@ export class ScheduleWhereInput {
 
   @Field({ nullable: true })
   userId: number;
+
+  @Field((_) => [Date], { nullable: true })
+  dates: Date[];
+
+
 }

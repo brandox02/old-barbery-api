@@ -5,6 +5,10 @@ import { HaircutInput } from "./inputDef";
 import { ICtx } from "../../types";
 import { removeNullFields } from "../../utils";
 
+const F = (fn: any) => {
+  return () => {};
+};
+
 @Resolver()
 export default class HaircutResolver {
   @Query(() => [Haircut])
@@ -12,17 +16,26 @@ export default class HaircutResolver {
     @Arg("where", { nullable: true }) where: HaircutInput,
     @Ctx() ctx: ICtx
   ) {
-    const haircuts = await ctx.appDataSource
-      .getRepository(Haircut)
-      .find({ where: removeNullFields<Haircut>(where) });
+    let whereEnabled = { ...where, enabled: true };
+
+    const haircuts = await ctx.appDataSource.getRepository(Haircut).find({
+      where: removeNullFields<Haircut>(whereEnabled),
+      order: {
+        name: "ASC",
+      },
+    });
     return haircuts;
   }
 
   @Query(() => Haircut, { nullable: true })
   async haircut(@Arg("where") where: HaircutInput, @Ctx() ctx: ICtx) {
-    const haircut = await ctx.appDataSource
-      .getRepository(Haircut)
-      .findOne({ where: removeNullFields<Haircut>(where) });
+    where.enabled = true;
+    const haircut = await ctx.appDataSource.getRepository(Haircut).findOne({
+      where: removeNullFields<Haircut>(where),
+      order: {
+        name: "ASC",
+      },
+    });
 
     return haircut;
   }

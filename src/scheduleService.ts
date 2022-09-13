@@ -3,7 +3,8 @@ import { ICtx } from "./types";
 export const getScheduleInDate = async (
   ctx: ICtx,
   scheduleDate: Date,
-  haircutDuration: string
+  haircutDuration: string,
+  include: boolean = false
 ) => {
   const formatDateTime = (datetime: Date) =>
     dayjs(datetime).format("DD-MM-YYYY HH:mm");
@@ -25,4 +26,3 @@ export const getScheduleInDate = async (
      `
   );
 };
-

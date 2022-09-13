@@ -1,7 +1,5 @@
 import dayjs from "dayjs";
-import { Repository } from "typeorm";
 import Haircut from "../../entities/Haircut";
-import Schedule from "../../entities/Schedule";
 import { getScheduleInDate } from "../../scheduleService";
 import { ICtx } from "../../types";
 import { ScheduleInput } from "./inputDef";

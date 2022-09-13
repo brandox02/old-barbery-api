@@ -5,11 +5,8 @@ import { ScheduleInput, ScheduleWhereInput } from "./inputDef";
 import { ICtx } from "../../types";
 import { buildWhere, removeNullFields } from "../../utils";
 import { saveScheduleValidations } from "./validations";
-import User from "../../entities/User";
-import Haircut from "../../entities/Haircut";
-import dayjs from "dayjs";
-import { getScheduleInDate } from "../../scheduleService";
 import { SchedulesPerDay } from "./outputDef";
+import dayjs from "dayjs";
 
 @Resolver()
 export default class ScheduleResolver {
@@ -18,22 +15,28 @@ export default class ScheduleResolver {
     @Arg("where", { nullable: true }) where: ScheduleWhereInput,
     @Ctx() ctx: ICtx
   ) {
-    const customWhere = [
-      ...(where.date
-        ? [
-            {
-              query: "CAST(schedule.schedule_date AS Date) = :date",
-              field: "date",
-              value: where.date,
-            },
-          ]
-        : []),
-    ];
+    const customWhere = [];
+
+    if (where.date) {
+      customWhere.push({
+        query: "CAST(schedule.schedule_date AS Date) = :date",
+        field: "date",
+        value: where.date,
+      });
+    } else if (where.dates) {
+      customWhere.push({
+        query: "CAST(schedule.schedule_date AS Date) IN(:...dates)",
+        field: "dates",
+        value: where.dates,
+      });
+    }
+
     const response = await ctx.appDataSource
       .createQueryBuilder(Schedule, "schedule")
       .leftJoinAndSelect("schedule.haircut", "haircut")
       .leftJoinAndSelect("schedule.user", "user")
       .where(...buildWhere("schedule", where, customWhere))
+      .addOrderBy("haircut.name", "ASC")
       .getMany();
 
     return response;
@@ -56,8 +59,8 @@ export default class ScheduleResolver {
   ) {
     const nonAvaibleIntervals = await ctx.appDataSource
       .query(`-- select the non-avaible intervals of the gived date
-      select to_char(schedules.schedule_date, 'HH24:MI') AS "start" ,
-            to_char(schedules.schedule_date + CAST(haircuts.duration as Interval ), 'HH24:MI') AS "end" 
+      select to_char(schedules.schedule_date, 'HH24:MI:SS') AS "start" ,
+            to_char(schedules.schedule_date + CAST(haircuts.duration as Interval ), 'HH24:MI:SS') AS "end" 
             , 'non-avaible' as "type"
             from schedules 
             left join haircuts on haircuts.id = schedules.haircut_id
@@ -85,7 +88,7 @@ where extract(isodow from date '${where.date}') = ws.id
   ) {
     const scheduleRepo = ctx.appDataSource.getRepository(Schedule);
 
-    await saveScheduleValidations(schedule, ctx);
+    // await saveScheduleValidations(schedule, ctx);
 
     const scheduleSaved = await scheduleRepo.save(
       scheduleRepo.create(schedule)
