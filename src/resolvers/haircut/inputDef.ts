@@ -1,4 +1,14 @@
-import { Field, InputType } from "type-graphql";
+import { Field, InputType,  } from "type-graphql";
+// import { type } from "apollo-";
+@InputType()
+class File {
+  @Field()
+  filename: String;
+  @Field()
+  mimetype: String;
+  @Field()
+  encoding: String;
+}
 
 @InputType()
 export class HaircutInput {
@@ -10,6 +20,7 @@ export class HaircutInput {
 
   @Field({ nullable: true })
   image: string;
+
   @Field({ nullable: true })
   price: number;
 

@@ -35,13 +35,17 @@ export default class User {
   @Field()
   lastname: string;
 
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  image?: string;
-
   @Column({ name: "is_admin", default: false })
   @Field()
   isAdmin: boolean;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  imageUrl: string;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  imageId: string;
 
   @CreateDateColumn({ name: "created_at" })
   createdAt: Date;

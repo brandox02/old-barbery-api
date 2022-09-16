@@ -18,9 +18,13 @@ export default class Haircut {
   @Field()
   name: string;
 
-  @Column()
-  @Field()
-  image: string;
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  imageUrl?: string;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  imageId?: string;
 
   @Column({ type: "float" })
   @Field()

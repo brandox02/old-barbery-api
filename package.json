@@ -10,7 +10,7 @@
   "keywords": [
     "barbery"
   ],
-  "author": "Brandon Saul Fernandez Mejia",
+  "author": "Brandon Saúl Fernández Mejía",
   "license": "ISC",
   "devDependencies": {
     "@types/jsonwebtoken": "^8.5.8",
@@ -22,9 +22,11 @@
   "dependencies": {
     "apollo-server": "^3.10.0",
     "class-validator": "^0.13.2",
+    "cloudinary": "^1.31.0",
     "dayjs": "^1.11.4",
     "dotenv": "^16.0.1",
     "graphql": "^15.8.0",
+    "graphql-upload": "^16.0.2",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "mongoose": "^6.5.0",

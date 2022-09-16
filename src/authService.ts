@@ -5,7 +5,7 @@ import { appDataSource } from "./initDBConnection";
 import { SignInInput } from "./resolvers/auth/inputDefs";
 dotenv.config();
 
-const secretToken: string = process.env.SECRET_TOKEN as string;
+const secretToken: string = process.env.JWT_SECRET_TOKEN as string;
 
 function generateAccesToken(user: SignInInput): string {
   const token = jwt.sign(JSON.stringify(user), secretToken, {});

@@ -4,6 +4,9 @@ import { Arg } from "type-graphql";
 import { HaircutInput } from "./inputDef";
 import { ICtx } from "../../types";
 import { removeNullFields } from "../../utils";
+import { uploadImage } from "../../fileService";
+import { EntitySchema } from "typeorm";
+import { UploadApiResponse } from "cloudinary";
 
 const F = (fn: any) => {
   return () => {};
@@ -47,8 +50,11 @@ export default class HaircutResolver {
   async saveHaircut(@Arg("haircut") haircut: HaircutInput, @Ctx() ctx: ICtx) {
     const haircutRepo = ctx.appDataSource.getRepository(Haircut);
 
-    const haircutSaved = await haircutRepo.save(haircutRepo.create(haircut));
+    const payload = await uploadImage(haircutRepo, haircut);
 
-    return await haircutRepo.findOne({ where: { id: haircutSaved.id } });
+    let haircutSaved = await haircutRepo.save(haircutRepo.create(payload));
+    if (!haircutSaved) throw new Error("Haircut could not saved correctly");
+
+    return haircutRepo.findOne({ where: { id: haircutSaved.id } });
   }
 }

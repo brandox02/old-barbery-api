@@ -5,6 +5,7 @@ import { UserInput } from "./inputDef";
 import { ICtx } from "../../types";
 import { removeNullFields } from "../../utils";
 import { logInByCredentials } from "../../authService";
+import { uploadImage } from "../../fileService";
 
 @Resolver()
 export default class UserResolver {
@@ -30,8 +31,13 @@ export default class UserResolver {
   async saveUser(@Arg("user") user: UserInput, @Ctx() ctx: ICtx) {
     const userRepo = ctx.appDataSource.getRepository(User);
 
-    const userSaved = await userRepo.save(userRepo.create(user));
+    const payload = await uploadImage(userRepo, user)
 
+    let { id } = await userRepo.save(userRepo.create(payload));
+
+    const userSaved = await userRepo.findOne({ where: { id } });
+
+    if (!userSaved) throw new Error("user could not saved correctly");
     const token = await logInByCredentials(
       userSaved.username,
       userSaved.password,
