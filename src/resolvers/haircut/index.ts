@@ -50,6 +50,7 @@ export default class HaircutResolver {
   async saveHaircut(@Arg("haircut") haircut: HaircutInput, @Ctx() ctx: ICtx) {
     const haircutRepo = ctx.appDataSource.getRepository(Haircut);
 
+    
     const payload = await uploadImage(haircutRepo, haircut);
 
     let haircutSaved = await haircutRepo.save(haircutRepo.create(payload));
