@@ -31,7 +31,7 @@ export default class UserResolver {
   async saveUser(@Arg("user") user: UserInput, @Ctx() ctx: ICtx) {
     const userRepo = ctx.appDataSource.getRepository(User);
 
-    const payload = await uploadImage(userRepo, user)
+    const payload = await uploadImage(userRepo, user);
 
     let { id } = await userRepo.save(userRepo.create(payload));
 

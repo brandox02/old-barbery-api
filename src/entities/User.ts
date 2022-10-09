@@ -1,4 +1,3 @@
-
 import { Field, ObjectType } from "type-graphql";
 import {
   Column,
@@ -46,6 +45,10 @@ export default class User {
   @Column({ nullable: true })
   @Field({ nullable: true })
   imageId: string;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  phoneNumber: string;
 
   @CreateDateColumn({ name: "created_at" })
   createdAt: Date;

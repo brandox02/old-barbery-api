@@ -12,6 +12,8 @@ export class SignInInput {
   password: string;
   @Field()
   username: string;
+  @Field()
+  phoneNumber: string;
 }
 
 @InputType()
@@ -23,4 +25,3 @@ export class LogInByCredentialInput {
   @Field({ nullable: true })
   username?: string;
 }
-

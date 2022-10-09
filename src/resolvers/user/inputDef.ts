@@ -25,4 +25,7 @@ export class UserInput {
 
   @Field({ nullable: true })
   image: string;
+
+  @Field({ nullable: true })
+  phoneNumber: string;
 }
