@@ -14,7 +14,7 @@ export const saveScheduleValidations = async (
   if (isCreate) {
     const haircut = await ctx.appDataSource
       .getRepository(Haircut)
-      .findOne({ where: { id: schedule.haircutId } });
+      .findOne({ where: { id: schedule.haircutId, enabled: true } });
 
     if (!haircut) throw new Error("**No existe este corte de pelo");
 

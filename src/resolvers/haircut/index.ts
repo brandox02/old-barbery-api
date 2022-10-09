@@ -5,24 +5,19 @@ import { HaircutInput } from "./inputDef";
 import { ICtx } from "../../types";
 import { removeNullFields } from "../../utils";
 import { uploadImage } from "../../fileService";
-import { EntitySchema } from "typeorm";
-import { UploadApiResponse } from "cloudinary";
-
-const F = (fn: any) => {
-  return () => {};
-};
 
 @Resolver()
 export default class HaircutResolver {
   @Query(() => [Haircut])
   async haircuts(
-    @Arg("where", { nullable: true }) where: HaircutInput,
+    @Arg("where", { nullable: true })
+    where: HaircutInput = {},
     @Ctx() ctx: ICtx
   ) {
-    let whereEnabled = { ...where, enabled: true };
+    where.enabled = true;
 
     const haircuts = await ctx.appDataSource.getRepository(Haircut).find({
-      where: removeNullFields<Haircut>(whereEnabled),
+      where: removeNullFields<Haircut>(where),
       order: {
         name: "ASC",
       },
@@ -31,7 +26,7 @@ export default class HaircutResolver {
   }
 
   @Query(() => Haircut, { nullable: true })
-  async haircut(@Arg("where") where: HaircutInput, @Ctx() ctx: ICtx) {
+  async haircut(@Arg("where") where: HaircutInput = {}, @Ctx() ctx: ICtx) {
     where.enabled = true;
     const haircut = await ctx.appDataSource.getRepository(Haircut).findOne({
       where: removeNullFields<Haircut>(where),
@@ -50,7 +45,6 @@ export default class HaircutResolver {
   async saveHaircut(@Arg("haircut") haircut: HaircutInput, @Ctx() ctx: ICtx) {
     const haircutRepo = ctx.appDataSource.getRepository(Haircut);
 
-    
     const payload = await uploadImage(haircutRepo, haircut);
 
     let haircutSaved = await haircutRepo.save(haircutRepo.create(payload));

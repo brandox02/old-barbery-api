@@ -13,6 +13,7 @@ export const getScheduleInDate = async (
     `select * from schedules 
      left join haircuts on haircuts.id = schedules.haircut_id
      where 
+     haircuts.enabled is true and 
      schedules.schedule_date between '${formatDateTime(
        scheduleDate
      )}' and '${formatDateTime(

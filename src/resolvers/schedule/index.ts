@@ -26,6 +26,11 @@ export default class ScheduleResolver {
         field: "cancelled",
         value: false,
       },
+      {
+        query: "haircut.cancelled = :enabled",
+        field: "enabled",
+        value: true,
+      },
     ];
 
     if (where.date) {
@@ -134,7 +139,7 @@ export default class ScheduleResolver {
             , 'non-avaible' as "type"
             from schedules 
             left join haircuts on haircuts.id = schedules.haircut_id
-            where CAST(schedules.schedule_date AS Date) = '${where.date}' and schedules.cancelled is false
+            where haircuts.enabled is true and CAST(schedules.schedule_date AS Date) = '${where.date}' and schedules.cancelled is false
       `);
 
     const response = [...nonAvaibleIntervals, ...nonWorkIntervals];
