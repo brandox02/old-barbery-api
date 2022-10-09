@@ -17,3 +17,4 @@ FEAT'S PENDIENTES:
 ISSUE'S PENDIENTES:
 
 * poner a cargar el dynamicamente las entidades
+* Arreglar en el "schedulesPerDay" que traiga los intervalos completos

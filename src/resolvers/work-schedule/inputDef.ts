@@ -1,7 +1,7 @@
 import { Field, InputType } from "type-graphql";
 
 @InputType()
-export class NonWorkIntevalInput {
+export class WorkIntevalInput {
   @Field({ nullable: true })
   id: number;
 
@@ -32,6 +32,6 @@ export class WorkScheduleDayInput {
   @Field({ nullable: true })
   end: string;
 
-  @Field(() => [NonWorkIntevalInput], { nullable: true })
-  nonWorkIntervals: NonWorkIntevalInput[];
+  @Field(() => [WorkIntevalInput], { nullable: true })
+  workIntervals: WorkIntevalInput[];
 }

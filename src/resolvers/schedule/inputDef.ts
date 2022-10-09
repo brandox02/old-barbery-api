@@ -14,7 +14,8 @@ export class ScheduleInput {
   @Field({ nullable: true })
   scheduleDate: Date;
 
-
+  @Field({ nullable: true })
+  cancelled: boolean; 
 }
 
 @InputType()
@@ -33,6 +34,4 @@ export class ScheduleWhereInput {
 
   @Field((_) => [Date], { nullable: true })
   dates: Date[];
-
-
 }

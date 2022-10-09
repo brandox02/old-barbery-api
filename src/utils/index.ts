@@ -26,14 +26,20 @@ export const buildWhere = (
     where,
     customWhere && customWhere.length ? customWhere.map((x) => x.field) : []
   );
-
   let computed = Object.keys(where)
     .map((curr) => `${alias}.${curr} = :${curr}`)
     .join(" AND ");
 
   if (customWhere && customWhere.length) {
-    customWhere.forEach((item) => {
-      computed += ` ${Object.keys(where).length ? " AND " : ""}`;
+    customWhere.forEach((item, index) => {
+      if (index === 0) {
+        if (Object.keys(where).length) {
+          computed += " AND ";
+        }
+      } else {
+        computed += " AND ";
+      }
+
       computed += item.query;
     });
   }

@@ -6,9 +6,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
-  JoinColumn,
 } from "typeorm";
-import NonWorkInterval from "./NonWorkInterval";
+import WorkInterval from "./WorkInterval";
 @ObjectType()
 @Entity({ name: "work_schedule_days", schema: "public" })
 export default class WorkScheduleDay {
@@ -28,11 +27,11 @@ export default class WorkScheduleDay {
   @Field()
   end: string;
 
-  @Field(() => [NonWorkInterval])
-  @OneToMany((_) => NonWorkInterval, (n) => n.workScheduleDay, {
+  @Field(() => [WorkInterval])
+  @OneToMany((_) => WorkInterval, (n) => n.workScheduleDay, {
     cascade: true,
   })
-  nonWorkIntervals: NonWorkInterval[];
+  workIntervals: WorkInterval[];
 
   @CreateDateColumn({ name: "created_at" })
   createdAt: Date;

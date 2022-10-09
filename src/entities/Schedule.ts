@@ -1,4 +1,3 @@
-import { now } from "lodash";
 import { Field, ObjectType } from "type-graphql";
 import {
   Column,
@@ -43,6 +42,10 @@ export default class Schedule {
     type: "timestamp",
   })
   scheduleDate: Date;
+
+  @Field()
+  @Column({ default: false, nullable: true })
+  cancelled: boolean;
 
   @CreateDateColumn({ name: "created_at" })
   createdAt: Date;

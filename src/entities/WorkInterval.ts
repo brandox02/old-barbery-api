@@ -12,8 +12,8 @@ import {
 import WorkScheduleDay from "./WorkScheduleDay";
 
 @ObjectType()
-@Entity({ name: "non_work_hour_intervals", schema: "public" })
-export default class NonWorkInteval {
+@Entity({ name: "work_hour_intervals", schema: "public" })
+export default class WorkInteval {
   @PrimaryGeneratedColumn()
   @Field()
   id: number;
@@ -26,7 +26,7 @@ export default class NonWorkInteval {
   @Field({ nullable: true })
   description: string;
 
-  @ManyToOne(() => WorkScheduleDay, (w) => w.nonWorkIntervals)
+  @ManyToOne(() => WorkScheduleDay, (w) => w.workIntervals)
   @JoinColumn({
     name: "work_schedule_day_id",
   })

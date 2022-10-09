@@ -18,7 +18,7 @@ export default class WorkScheduleDayResolver {
       .find({
         where: removeNullFields<WorkScheduleDay>(where),
         relations: {
-          nonWorkIntervals: true,
+          workIntervals: true,
         },
       });
     return workScheduleDays;
@@ -34,7 +34,7 @@ export default class WorkScheduleDayResolver {
       .findOne({
         where: removeNullFields<WorkScheduleDay>(where),
         relations: {
-          nonWorkIntervals: true,
+          workIntervals: true,
         },
       });
 
@@ -60,7 +60,7 @@ export default class WorkScheduleDayResolver {
       return await workScheduleDayRepo.findOne({
         where: { id: workScheduleDaySaved.id },
         relations: {
-          nonWorkIntervals: true,
+          workIntervals: true,
         },
       });
     });
@@ -86,7 +86,7 @@ export default class WorkScheduleDayResolver {
       return await workScheduleDayRepo.find({
         where: { id: In(workScheduleDays.map((x) => x.id)) },
         relations: {
-          nonWorkIntervals: true,
+          workIntervals: true,
         },
       });
     });

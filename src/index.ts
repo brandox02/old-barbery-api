@@ -49,10 +49,6 @@ async function init() {
     secure: true,
   });
 
-  // const response = Cloudinary.image("sample.jpg", { resource_type: "image" });
-  // const response = Cloudinary.source('v1663096697/cld-sample-3.jpg')
-  // console.log(response);
-
   app.listen(port, async () => {
     console.log(`The app is ready in port ${port}`);
   });

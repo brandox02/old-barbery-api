@@ -4,9 +4,8 @@ import { Arg } from "type-graphql";
 import { ScheduleInput, ScheduleWhereInput } from "./inputDef";
 import { ICtx } from "../../types";
 import { buildWhere, removeNullFields } from "../../utils";
-import { saveScheduleValidations } from "./validations";
 import { SchedulesPerDay } from "./outputDef";
-import dayjs from "dayjs";
+import { isChoken } from "../../utils/isChoken";
 
 @Resolver()
 export default class ScheduleResolver {
@@ -15,7 +14,19 @@ export default class ScheduleResolver {
     @Arg("where", { nullable: true }) where: ScheduleWhereInput,
     @Ctx() ctx: ICtx
   ) {
-    const customWhere = [];
+    interface CustomWhere {
+      query: string;
+      field: string;
+      value: any;
+    }
+
+    const customWhere: CustomWhere[] = [
+      {
+        query: "schedule.cancelled = :cancelled",
+        field: "cancelled",
+        value: false,
+      },
+    ];
 
     if (where.date) {
       customWhere.push({
@@ -44,6 +55,7 @@ export default class ScheduleResolver {
 
   @Query(() => Schedule, { nullable: true })
   async schedule(@Arg("where") where: ScheduleInput, @Ctx() ctx: ICtx) {
+    where.cancelled = false;
     const schedule = await ctx.appDataSource.getRepository(Schedule).findOne({
       where: removeNullFields<Schedule>(where),
       relations: ["user", "haircut"],
@@ -57,6 +69,64 @@ export default class ScheduleResolver {
     @Arg("where", { nullable: true }) where: ScheduleWhereInput,
     @Ctx() ctx: ICtx
   ) {
+    type IWorkIntervals = Array<{ start: string; end: string; type: string }>;
+    function buildNonWorkIntervals(workIntervals: IWorkIntervals) {
+      const areContinues = (arg0: string, arg1: string) => {
+        const num0 = parseInt(arg0.substring(0, 2));
+        const num1 = parseInt(arg1.substring(0, 2));
+
+        return num0 + 1 == num1 || num1 + 1 === num0;
+      };
+
+      const nonWorkIntervals = [...Array(24)]
+        .map(
+          (_, i) =>
+            `${
+              i.toString().length === 1 ? `0${i.toString()}` : i.toString()
+            }:00:00`
+        )
+        .filter((x) =>
+          workIntervals.every(
+            (y: any) =>
+              !isChoken({
+                time: x,
+                duration: "00:00:00",
+                startTime: y.start,
+                endTime: y.end,
+              })
+          )
+        )
+        .reduce((acc: IWorkIntervals, curr: string) => {
+          const blankTemplate = { start: curr, end: curr, type: "non-work" };
+          if (!acc.length) {
+            return [...acc, blankTemplate];
+          }
+          if (areContinues(curr, acc[acc.length - 1].end)) {
+            const newArr = [...acc];
+            newArr[newArr.length - 1] = {
+              start: newArr[newArr.length - 1].start,
+              end: curr,
+              type: "non-work",
+            };
+            return newArr;
+          }
+
+          return [...acc, blankTemplate];
+        }, []);
+
+      return nonWorkIntervals;
+    }
+
+    const workIntervals = await ctx.appDataSource.query(`
+    --  select non-work intervals of the gived date
+    select nw.start, nw.end , 'non-work' as "type"
+    from work_hour_intervals nw  
+    left join work_schedule_days ws on nw.work_schedule_day_id = ws.id
+    where extract(isodow from date '${where.date}') = ws.id
+    `);
+
+    const nonWorkIntervals = buildNonWorkIntervals(workIntervals);
+
     const nonAvaibleIntervals = await ctx.appDataSource
       .query(`-- select the non-avaible intervals of the gived date
       select to_char(schedules.schedule_date, 'HH24:MI:SS') AS "start" ,
@@ -64,18 +134,11 @@ export default class ScheduleResolver {
             , 'non-avaible' as "type"
             from schedules 
             left join haircuts on haircuts.id = schedules.haircut_id
-            where CAST(schedules.schedule_date AS Date) = '${where.date}'
+            where CAST(schedules.schedule_date AS Date) = '${where.date}' and schedules.cancelled is false
       `);
 
-    const nonWorkIntervals = await ctx.appDataSource.query(`
-    --  select non-work intervals of the gived date
-select nw.start, nw.end , 'non-work' as "type"
-from non_work_hour_intervals nw  
-left join work_schedule_days ws on nw.work_schedule_day_id = ws.id
-where extract(isodow from date '${where.date}') = ws.id
-`);
-
-    return [...nonAvaibleIntervals, ...nonWorkIntervals];
+    const response = [...nonAvaibleIntervals, ...nonWorkIntervals];
+    return response;
   }
 
   @Mutation(() => Schedule, {
