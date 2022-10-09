@@ -27,7 +27,7 @@ export default class ScheduleResolver {
         value: false,
       },
       {
-        query: "haircut.cancelled = :enabled",
+        query: "haircut.enabled = :enabled",
         field: "enabled",
         value: true,
       },
