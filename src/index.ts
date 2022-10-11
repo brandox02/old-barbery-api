@@ -17,7 +17,7 @@ import { delay } from "./utils/delay";
 dotenv.config();
 
 async function init() {
-  const port = process.env.APP_PORT || 5000;
+  const port = process.env.PORT || 5000;
 
   const schema = await buildSchema({
     resolvers: [path.join(__dirname, "./resolvers/**/*.{ts,js}")],
