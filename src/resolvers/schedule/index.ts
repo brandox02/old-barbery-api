@@ -5,7 +5,6 @@ import { ScheduleInput, ScheduleWhereInput } from "./inputDef";
 import { ICtx } from "../../types";
 import { buildWhere, removeNullFields } from "../../utils";
 import { GetAvalibleIntervals, SchedulesPerDay } from "./outputDef";
-import { isChoken } from "../../utils/isChoken";
 import {
   getAvalibleIntervals,
   getBusyDates,

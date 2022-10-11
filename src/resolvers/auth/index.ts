@@ -30,8 +30,8 @@ export default class AuthResolver {
   async logInByCredential(
     @Arg("credentials") credentials: LogInByCredentialInput
   ) {
-    const { email, password, username } = credentials;
-    const token = await logInByCredentials(username, password, email);
+    const { password, username } = credentials;
+    const token = await logInByCredentials(username, password, username);
     return { token };
   }
 

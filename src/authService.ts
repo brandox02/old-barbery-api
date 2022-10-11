@@ -26,7 +26,6 @@ export async function signIn(user: SignInInput): Promise<string> {
 
   const userSaved = await userRepo.save(userRepo.create(user));
 
-
   const token = generateAccesToken(userSaved);
 
   return token;
@@ -42,15 +41,17 @@ export async function logInByCredentials(
   }
   const userRepo = appDataSource.getRepository(User);
 
-  const userFound = await userRepo.findOne({
-    where: [
-      { username, password },
-      { email, password },
-    ],
-  });
+  const userFound = await userRepo
+    .createQueryBuilder("user")
+    .select("user")
+    .where(
+      "(user.email = :email or user.username = :username) and user.password = :password",
+      { email, username, password }
+    )
+    .getOne();
 
   if (!userFound) {
-    throw new Error("This credentials are not correct");
+    throw new Error("Credenciales incorrectas");
   }
 
   const token = generateAccesToken(userFound);
