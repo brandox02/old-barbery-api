@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "apollo-server": "^3.10.0",
+    "apollo-server-express": "^3.10.3",
     "class-validator": "^0.13.2",
     "cloudinary": "^1.31.0",
     "dayjs": "^1.11.4",

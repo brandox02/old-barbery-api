@@ -15,7 +15,6 @@ export default class HaircutResolver {
     @Ctx() ctx: ICtx
   ) {
     where.enabled = true;
-
     const haircuts = await ctx.appDataSource.getRepository(Haircut).find({
       where: removeNullFields<Haircut>(where),
       order: {

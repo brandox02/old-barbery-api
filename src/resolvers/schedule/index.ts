@@ -4,8 +4,13 @@ import { Arg } from "type-graphql";
 import { ScheduleInput, ScheduleWhereInput } from "./inputDef";
 import { ICtx } from "../../types";
 import { buildWhere, removeNullFields } from "../../utils";
-import { SchedulesPerDay } from "./outputDef";
+import { GetAvalibleIntervals, SchedulesPerDay } from "./outputDef";
 import { isChoken } from "../../utils/isChoken";
+import {
+  getAvalibleIntervals,
+  getBusyDates,
+  GetValibleInterval,
+} from "../../scheduleService";
 
 @Resolver()
 export default class ScheduleResolver {
@@ -74,76 +79,82 @@ export default class ScheduleResolver {
     @Arg("where", { nullable: true }) where: ScheduleWhereInput,
     @Ctx() ctx: ICtx
   ) {
-    type IWorkIntervals = Array<{ start: string; end: string; type: string }>;
-    function buildNonWorkIntervals(workIntervals: IWorkIntervals) {
-      const areContinues = (arg0: string, arg1: string) => {
-        const num0 = parseInt(arg0.substring(0, 2));
-        const num1 = parseInt(arg1.substring(0, 2));
+    // type IWorkIntervals = Array<{ start: string; end: string; type: string }>;
+    // function buildNonWorkIntervals(workIntervals: IWorkIntervals) {
+    //   const areContinues = (arg0: string, arg1: string) => {
+    //     const num0 = parseInt(arg0.substring(0, 2));
+    //     const num1 = parseInt(arg1.substring(0, 2));
+    //     return num0 + 1 == num1 || num1 + 1 === num0;
+    //   };
+    //   const nonWorkIntervals = [...Array(24)]
+    //     .map(
+    //       (_, i) =>
+    //         `${
+    //           i.toString().length === 1 ? `0${i.toString()}` : i.toString()
+    //         }:00:00`
+    //     )
+    //     .filter((x) =>
+    //       workIntervals.every(
+    //         (y: any) =>
+    //           !isChoken({
+    //             time: x,
+    //             duration: "00:00:00",
+    //             startTime: y.start,
+    //             endTime: y.end,
+    //           })
+    //       )
+    //     )
+    //     .reduce((acc: IWorkIntervals, curr: string) => {
+    //       const blankTemplate = { start: curr, end: curr, type: "non-work" };
+    //       if (!acc.length) {
+    //         return [...acc, blankTemplate];
+    //       }
+    //       if (areContinues(curr, acc[acc.length - 1].end)) {
+    //         const newArr = [...acc];
+    //         newArr[newArr.length - 1] = {
+    //           start: newArr[newArr.length - 1].start,
+    //           end: curr,
+    //           type: "non-work",
+    //         };
+    //         return newArr;
+    //       }
+    //       return [...acc, blankTemplate];
+    //     }, []);
+    //   return nonWorkIntervals;
+    // }
+    // const workIntervals = await ctx.appDataSource.query(`
+    // --  select non-work intervals of the gived date
+    // select nw.start, nw.end , 'non-work' as "type"
+    // from work_hour_intervals nw
+    // left join work_schedule_days ws on nw.work_schedule_day_id = ws.id
+    // where extract(isodow from date '${where.date}') = ws.id
+    // `);
+    // const nonWorkIntervals = buildNonWorkIntervals(workIntervals);
+    // const nonAvaibleIntervals = await ctx.appDataSource
+    //   .query(`-- select the non-avaible intervals of the gived date
+    //   select to_char(schedules.schedule_date, 'HH24:MI:SS') AS "start" ,
+    //         to_char(schedules.schedule_date + CAST(haircuts.duration as Interval ), 'HH24:MI:SS') AS "end"
+    //         , 'non-avaible' as "type"
+    //         from schedules
+    //         left join haircuts on haircuts.id = schedules.haircut_id
+    //         where haircuts.enabled is true and CAST(schedules.schedule_date AS Date) = '${where.date}' and schedules.cancelled is false
+    //   `);
+    // const response = [...nonAvaibleIntervals, ...nonWorkIntervals];
+    // return response;
 
-        return num0 + 1 == num1 || num1 + 1 === num0;
-      };
-
-      const nonWorkIntervals = [...Array(24)]
-        .map(
-          (_, i) =>
-            `${
-              i.toString().length === 1 ? `0${i.toString()}` : i.toString()
-            }:00:00`
-        )
-        .filter((x) =>
-          workIntervals.every(
-            (y: any) =>
-              !isChoken({
-                time: x,
-                duration: "00:00:00",
-                startTime: y.start,
-                endTime: y.end,
-              })
-          )
-        )
-        .reduce((acc: IWorkIntervals, curr: string) => {
-          const blankTemplate = { start: curr, end: curr, type: "non-work" };
-          if (!acc.length) {
-            return [...acc, blankTemplate];
-          }
-          if (areContinues(curr, acc[acc.length - 1].end)) {
-            const newArr = [...acc];
-            newArr[newArr.length - 1] = {
-              start: newArr[newArr.length - 1].start,
-              end: curr,
-              type: "non-work",
-            };
-            return newArr;
-          }
-
-          return [...acc, blankTemplate];
-        }, []);
-
-      return nonWorkIntervals;
-    }
-
-    const workIntervals = await ctx.appDataSource.query(`
-    --  select non-work intervals of the gived date
-    select nw.start, nw.end , 'non-work' as "type"
-    from work_hour_intervals nw  
-    left join work_schedule_days ws on nw.work_schedule_day_id = ws.id
-    where extract(isodow from date '${where.date}') = ws.id
-    `);
-
-    const nonWorkIntervals = buildNonWorkIntervals(workIntervals);
-
-    const nonAvaibleIntervals = await ctx.appDataSource
-      .query(`-- select the non-avaible intervals of the gived date
-      select to_char(schedules.schedule_date, 'HH24:MI:SS') AS "start" ,
-            to_char(schedules.schedule_date + CAST(haircuts.duration as Interval ), 'HH24:MI:SS') AS "end" 
-            , 'non-avaible' as "type"
-            from schedules 
-            left join haircuts on haircuts.id = schedules.haircut_id
-            where haircuts.enabled is true and CAST(schedules.schedule_date AS Date) = '${where.date}' and schedules.cancelled is false
-      `);
-
-    const response = [...nonAvaibleIntervals, ...nonWorkIntervals];
+    const response = await getBusyDates(ctx, where.date);
     return response;
+  }
+
+  @Query(() => [GetAvalibleIntervals])
+  async getAvalibleIntervals(
+    @Arg("duration") duration: string,
+    @Arg("date") date: string,
+    @Ctx() ctx: ICtx
+  ): Promise<GetValibleInterval[]> {
+    console.log({ duration, date });
+    const busyDates = await getBusyDates(ctx, date);
+    return getAvalibleIntervals(duration, busyDates);
   }
 
   @Mutation(() => Schedule, {

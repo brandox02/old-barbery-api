@@ -12,4 +12,11 @@ export class SchedulesPerDay {
   type: string;
 }
 
+@ObjectType()
+export class GetAvalibleIntervals {
+  @Field()
+  start: Date;
 
+  @Field()
+  end: Date;
+}
