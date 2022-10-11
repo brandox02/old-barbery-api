@@ -88,7 +88,6 @@ export default class ScheduleResolver {
     @Arg("date") date: string,
     @Ctx() ctx: ICtx
   ): Promise<GetValibleInterval[]> {
-    console.log({ duration, date });
     const busyDates = await getBusyDates(ctx, date);
     return getAvalibleIntervals(duration, busyDates);
   }
