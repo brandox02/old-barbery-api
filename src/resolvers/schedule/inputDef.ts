@@ -15,7 +15,7 @@ export class ScheduleInput {
   scheduleDate: Date;
 
   @Field({ nullable: true })
-  cancelled: boolean; 
+  cancelled: boolean;
 }
 
 @InputType()
@@ -24,7 +24,7 @@ export class ScheduleWhereInput {
   id: number;
 
   @Field({ nullable: true })
-  date: string;
+  date: Date;
 
   @Field({ nullable: true })
   haircutId: number;

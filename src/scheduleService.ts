@@ -37,7 +37,7 @@ export const getScheduleInDate = async (
 
 export const getBusyDates = async (
   ctx: ICtx,
-  date: string
+  date: Date
 ): Promise<SchedulesPerDay[]> => {
   type IWorkIntervals = { start: string; end: string; type: string }[];
   function buildNonWorkIntervals(workIntervals: IWorkIntervals) {
@@ -92,7 +92,7 @@ export const getBusyDates = async (
   select nw.start, nw.end , 'non-work' as "type"
   from work_hour_intervals nw  
   left join work_schedule_days ws on nw.work_schedule_day_id = ws.id
-  where extract(isodow from date '${date}') = ws.id
+  where extract(isodow from date '${dayjs(date).format("YYYY-MM-DD")}') = ws.id
   `);
 
   const nonWorkIntervals = buildNonWorkIntervals(workIntervals);
@@ -104,7 +104,9 @@ export const getBusyDates = async (
           , 'non-avaible' as "type"
           from schedules 
           left join haircuts on haircuts.id = schedules.haircut_id
-          where haircuts.enabled is true and CAST(schedules.schedule_date AS Date) = '${date}' and schedules.cancelled is false
+          where haircuts.enabled is true and CAST(schedules.schedule_date AS Date) = '${dayjs(
+            date
+          ).format("YYYY-MM-DD")}' and schedules.cancelled is false
     `);
 
   const response = [...nonAvaibleIntervals, ...nonWorkIntervals];

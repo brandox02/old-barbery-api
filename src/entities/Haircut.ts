@@ -18,11 +18,11 @@ export default class Haircut {
   @Field()
   name: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, name: "image_url" })
   @Field({ nullable: true })
   imageUrl?: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, name: "image_id" })
   @Field({ nullable: true })
   imageId?: string;
 

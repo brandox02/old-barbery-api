@@ -10,6 +10,7 @@ import {
   getBusyDates,
   GetValibleInterval,
 } from "../../scheduleService";
+import dayjs from "dayjs";
 
 @Resolver()
 export default class ScheduleResolver {
@@ -85,7 +86,7 @@ export default class ScheduleResolver {
   @Query(() => [GetAvalibleIntervals])
   async getAvalibleIntervals(
     @Arg("duration") duration: string,
-    @Arg("date") date: string,
+    @Arg("date") date: Date,
     @Ctx() ctx: ICtx
   ): Promise<GetValibleInterval[]> {
     const busyDates = await getBusyDates(ctx, date);
