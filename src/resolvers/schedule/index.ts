@@ -102,7 +102,10 @@ export default class ScheduleResolver {
     @Ctx() ctx: ICtx
   ) {
     const scheduleRepo = ctx.appDataSource.getRepository(Schedule);
-
+    console.log(
+      "schedule: ",
+      dayjs(schedule.scheduleDate).format("DD-MM-YYYY hh:mm:ssA")
+    );
     // await saveScheduleValidations(schedule, ctx);
 
     const scheduleSaved = await scheduleRepo.save(
