@@ -1,5 +1,5 @@
 {
-  "exec": "kill $(lsof -t -i:5000) ; ts-node ./src/index.ts",
+  "exec": "ts-node ./src/index.ts",
   "watch": ["src"],
   "ext": "ts",
   "verbose": false
