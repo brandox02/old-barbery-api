@@ -16,6 +16,13 @@ import { delay } from "./utils/delay";
 
 dotenv.config();
 
+Cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+  secure: true,
+});
+
 async function init() {
   const port = process.env.PORT || 5000;
 
@@ -25,6 +32,10 @@ async function init() {
 
   const appDataSource = await initDBConnection();
   const app = express();
+  app.use(express.json({ limit: "50mb" }));
+  app.use(
+    express.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 })
+  );
   const server = new ApolloServer({
     schema,
     plugins: [ApolloServerPluginLandingPageLocalDefault({ embed: true })],
@@ -50,18 +61,9 @@ async function init() {
   await server.start();
   server.applyMiddleware({ app });
 
-  Cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-    secure: true,
-  });
-
   app.listen(port, async () => {
     console.log(`The app is ready in port ${port}`);
   });
-
-  await new Promise((resolve: any) => app.listen({ port: 4000 }, resolve));
 }
 
 init();
