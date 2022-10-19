@@ -13,6 +13,7 @@ import { getUserByToken } from "./authService";
 import { v2 as Cloudinary } from "cloudinary";
 import dotenv from "dotenv";
 import { delay } from "./utils/delay";
+import { privacyPolicyHtmlString } from "./utils/privacy-policy-html-string";
 
 dotenv.config();
 
@@ -36,6 +37,10 @@ async function init() {
   app.use(
     express.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 })
   );
+  app.get("/", (_, res) => {
+    res.send(privacyPolicyHtmlString);
+  });
+
   const server = new ApolloServer({
     schema,
     plugins: [ApolloServerPluginLandingPageLocalDefault({ embed: true })],
@@ -63,7 +68,7 @@ async function init() {
 
   app.listen(port, async () => {
     console.log(`The app is ready in port ${port}`);
-    console.log("the version running is v1");
+    console.log("the version running is v2");
   });
 }
 
