@@ -107,6 +107,7 @@ export default class ScheduleResolver {
     @Arg("schedule") schedule: ScheduleInput,
     @Ctx() ctx: ICtx
   ) {
+    console.log("descatching this file to render deploy platform");
     const scheduleRepo = ctx.appDataSource.getRepository(Schedule);
     const hourOfDifference: number = parseInt(
       process.env.DIFF_HOURS_SERVER || ""
