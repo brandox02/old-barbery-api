@@ -11,6 +11,10 @@ import {
   GetValibleInterval,
 } from "../../scheduleService";
 import dayjs from "dayjs";
+import { printDate } from "../../utils/printDate";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 @Resolver()
 export default class ScheduleResolver {
@@ -39,12 +43,14 @@ export default class ScheduleResolver {
     ];
 
     if (where.date) {
+      printDate(where.date);
       customWhere.push({
         query: "CAST(schedule.schedule_date AS Date) = :date",
         field: "date",
         value: where.date,
       });
     } else if (where.dates) {
+      where.dates.forEach((date) => printDate(date));
       customWhere.push({
         query: "CAST(schedule.schedule_date AS Date) IN(:...dates)",
         field: "dates",
@@ -102,10 +108,16 @@ export default class ScheduleResolver {
     @Ctx() ctx: ICtx
   ) {
     const scheduleRepo = ctx.appDataSource.getRepository(Schedule);
-    console.log(
-      "schedule: ",
-      dayjs(schedule.scheduleDate).format("DD-MM-YYYY hh:mm:ssA")
+    const hourOfDifference: number = parseInt(
+      process.env.DIFF_HOURS_SERVER || ""
     );
+
+    schedule.scheduleDate = dayjs(schedule.scheduleDate)
+      .subtract(hourOfDifference, "hours")
+      .toDate();
+
+    printDate(schedule.scheduleDate);
+
     // await saveScheduleValidations(schedule, ctx);
 
     const scheduleSaved = await scheduleRepo.save(

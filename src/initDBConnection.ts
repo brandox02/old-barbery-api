@@ -20,14 +20,13 @@ export default async function initDBConnection() {
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
     synchronize: true,
-
     entities: [
       Haircut,
       Schedule,
       User,
       GeneralParameter,
       WorkScheduleDay,
-      WorkInterval
+      WorkInterval,
       // path.join(__dirname, "./entities/*.js"),
     ],
   });
