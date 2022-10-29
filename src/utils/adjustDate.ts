@@ -7,7 +7,7 @@ export const adjustDate = (dateInput: Date): Date => {
     process.env.DIFF_HOURS_SERVER || ""
   );
 
-  const date = dayjs(dateInput).subtract(hourOfDifference, "hours").toDate();
+  const date = dayjs(dateInput).add(hourOfDifference, "hours").toDate();
 
   return date;
 };

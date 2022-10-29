@@ -56,11 +56,10 @@ export default class ScheduleResolver {
       console.log("adjusted date:");
       console.log(adjustDate(where.date));
     } else if (where.dates) {
-      where.dates.map((date) => adjustDate(date));
       customWhere.push({
         query: "CAST(schedule.schedule_date AS Date) IN(:...dates)",
         field: "dates",
-        value: where.dates,
+        value: where.dates.map((date) => adjustDate(date)),
       });
     }
 
