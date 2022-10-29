@@ -66,6 +66,10 @@ export default class ScheduleResolver {
       .addOrderBy("haircut.name", "ASC")
       .getMany();
 
+    response.forEach((element) => {
+      printDate(element.scheduleDate);
+    });
+
     return response;
   }
 
