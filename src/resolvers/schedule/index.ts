@@ -13,6 +13,7 @@ import {
 import dayjs from "dayjs";
 import { printDate } from "../../utils/printDate";
 import dotenv from "dotenv";
+import { adjustDate } from "../../utils/adjustDate";
 
 dotenv.config();
 
@@ -43,14 +44,19 @@ export default class ScheduleResolver {
     ];
 
     if (where.date) {
+      console.log("input date:");
       printDate(where.date);
+
       customWhere.push({
         query: "CAST(schedule.schedule_date AS Date) = :date",
         field: "date",
-        value: where.date,
+        value: adjustDate(where.date),
       });
+
+      console.log("adjusted date:");
+      console.log(adjustDate(where.date));
     } else if (where.dates) {
-      where.dates.forEach((date) => printDate(date));
+      where.dates.map((date) => adjustDate(date));
       customWhere.push({
         query: "CAST(schedule.schedule_date AS Date) IN(:...dates)",
         field: "dates",
@@ -113,13 +119,6 @@ export default class ScheduleResolver {
   ) {
     console.log("descatching this file to render deploy platform");
     const scheduleRepo = ctx.appDataSource.getRepository(Schedule);
-    const hourOfDifference: number = parseInt(
-      process.env.DIFF_HOURS_SERVER || ""
-    );
-
-    schedule.scheduleDate = dayjs(schedule.scheduleDate)
-      .subtract(hourOfDifference, "hours")
-      .toDate();
 
     printDate(schedule.scheduleDate);
 
