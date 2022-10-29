@@ -68,7 +68,7 @@ async function init() {
 
   app.listen(port, async () => {
     console.log(`The app is ready in port ${port}`);
-    console.log("the version running is v3");
+    console.log("the version running is v4");
   });
 }
 
