@@ -23,6 +23,7 @@ export default class ScheduleResolver {
     @Arg("where", { nullable: true }) where: ScheduleWhereInput,
     @Ctx() ctx: ICtx
   ) {
+    console.log("target date: ", JSON.stringify(where));
     interface CustomWhere {
       query: string;
       field: string;
