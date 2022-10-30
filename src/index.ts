@@ -24,6 +24,8 @@ Cloudinary.config({
   secure: true,
 });
 
+process.env.TZ = "America/Santo_Domingo";
+
 async function init() {
   const port = process.env.PORT || 5000;
 
