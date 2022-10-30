@@ -10,7 +10,6 @@ import {
   getBusyDates,
   GetValibleInterval,
 } from "../../scheduleService";
-import dayjs from "dayjs";
 import { printDate } from "../../utils/printDate";
 import dotenv from "dotenv";
 import { adjustDate } from "../../utils/adjustDate";
@@ -44,22 +43,16 @@ export default class ScheduleResolver {
     ];
 
     if (where.date) {
-      console.log("input date:");
-      printDate(where.date);
-
       customWhere.push({
         query: "CAST(schedule.schedule_date AS Date) = :date",
         field: "date",
-        value: adjustDate(where.date),
+        value: where.date,
       });
-
-      console.log("adjusted date:");
-      console.log(adjustDate(where.date));
     } else if (where.dates) {
       customWhere.push({
         query: "CAST(schedule.schedule_date AS Date) IN(:...dates)",
         field: "dates",
-        value: where.dates.map((date) => adjustDate(date)),
+        value: where.dates,
       });
     }
 
