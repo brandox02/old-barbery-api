@@ -12,7 +12,7 @@ import {
 } from "../../scheduleService";
 import { printDate } from "../../utils/printDate";
 import dotenv from "dotenv";
-import { adjustDate } from "../../utils/adjustDate";
+import dayjs from "dayjs";
 
 dotenv.config();
 
@@ -23,12 +23,13 @@ export default class ScheduleResolver {
     @Arg("where", { nullable: true }) where: ScheduleWhereInput,
     @Ctx() ctx: ICtx
   ) {
-    console.log("target date: ", JSON.stringify(where));
     interface CustomWhere {
       query: string;
       field: string;
       value: any;
     }
+
+    const currentDate: Date = dayjs().subtract(1, "minutes").toDate();
 
     const customWhere: CustomWhere[] = [
       {
@@ -40,6 +41,11 @@ export default class ScheduleResolver {
         query: "haircut.enabled = :enabled",
         field: "enabled",
         value: true,
+      },
+      {
+        query: "schedule.schedule_date + haircut.duration >= :currentDate",
+        field: "currentDate",
+        value: currentDate,
       },
     ];
 
@@ -110,10 +116,7 @@ export default class ScheduleResolver {
     @Arg("schedule") schedule: ScheduleInput,
     @Ctx() ctx: ICtx
   ) {
-    console.log("descatching this file to render deploy platform");
     const scheduleRepo = ctx.appDataSource.getRepository(Schedule);
-
-    printDate(schedule.scheduleDate);
 
     // await saveScheduleValidations(schedule, ctx);
 

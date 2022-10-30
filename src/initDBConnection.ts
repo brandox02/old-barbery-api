@@ -20,7 +20,6 @@ export default async function initDBConnection() {
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
     synchronize: true,
-    logging: true,
     entities: [
       Haircut,
       Schedule,
