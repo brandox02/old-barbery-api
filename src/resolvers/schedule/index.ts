@@ -23,6 +23,8 @@ export default class ScheduleResolver {
     @Arg("where", { nullable: true }) where: ScheduleWhereInput,
     @Ctx() ctx: ICtx
   ) {
+    console.log("The following is the date(s) received: ");
+
     interface CustomWhere {
       query: string;
       field: string;
@@ -50,12 +52,19 @@ export default class ScheduleResolver {
     ];
 
     if (where.date) {
+      printDate(where.date);
       customWhere.push({
         query: "CAST(schedule.schedule_date AS Date) = :date",
         field: "date",
         value: where.date,
       });
     } else if (where.dates) {
+      where.dates.forEach((date) => {
+        printDate(date);
+        console.log(
+          "============================================================"
+        );
+      });
       customWhere.push({
         query: "CAST(schedule.schedule_date AS Date) IN(:...dates)",
         field: "dates",
